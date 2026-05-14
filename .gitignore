@@ -1,0 +1,37 @@
+# ── Python / Backend ─────────────────────────────────────────────
+backend/.venv/
+.venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.eggs/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+htmlcov/
+.coverage
+*.log
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# ── Node / Angular / Frontend ────────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+
+# ── OS artefacts ─────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDEs ─────────────────────────────────────────────────────────
+.idea/
+*.suo
+*.user

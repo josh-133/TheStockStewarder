@@ -18,19 +18,22 @@ export class AppComponent implements OnInit {
   search = '';
   error = '';
   loading = false;
+  lookupResult: Stock | null = null;
+  lookupError = '';
+  lookupLoading = false;
 
-  private readonly apiUrl = 'http://localhost:8000/watchlist';
+  private readonly apiUrl = 'http://localhost:8000';
 
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.fetchStocks();
+    this.fetchWatchlist();
   }
 
-  fetchStocks(): void {
+  fetchWatchlist(): void {
     this.loading = true;
     this.error = '';
-    this.http.get<Stock[]>(this.apiUrl).subscribe({
+    this.http.get<Stock[]>(`${this.apiUrl}/watchlist`).subscribe({
       next: (data) => {
         this.stocks = data;
         this.applyFilter();
@@ -48,5 +51,25 @@ export class AppComponent implements OnInit {
     this.filtered = term
       ? this.stocks.filter(s => s.ticker.includes(term))
       : [...this.stocks];
+  }
+
+  lookupTicker(): void {
+    const symbol = this.search.trim().toUpperCase();
+    if (!symbol) return;
+    this.lookupResult = null;
+    this.lookupError = '';
+    this.lookupLoading = true;
+    this.http.get<Stock>(`${this.apiUrl}/quote/${symbol}`).subscribe({
+      next: (data) => {
+        this.lookupResult = data;
+        this.lookupLoading = false;
+      },
+      error: (err) => {
+        this.lookupError = err.error?.detail ?? `No data found for '${symbol}'.`;
+        this.lookupLoading = false;
+      }
+    });
+  }
+}
   }
 }

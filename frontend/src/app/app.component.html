@@ -1,11 +1,27 @@
 <div class="container">
   <h1>Stock Watchlist</h1>
+
   <div class="search-bar">
-    <input type="text" placeholder="Search ticker..." [(ngModel)]="search" (ngModelChange)="applyFilter()" />
-    <button (click)="fetchStocks()">Refresh</button>
+    <input type="text" placeholder="Search or look up ticker..." [(ngModel)]="search" (ngModelChange)="applyFilter()" />
+    <button (click)="lookupTicker()">Look Up</button>
+    <button (click)="fetchWatchlist()">Refresh</button>
   </div>
+
+  <!-- Single ticker lookup result -->
+  <div *ngIf="lookupLoading" class="status">Looking up...</div>
+  <div *ngIf="lookupError" class="error">{{ lookupError }}</div>
+  <div *ngIf="lookupResult" class="lookup-result">
+    <span class="ticker">{{ lookupResult.ticker }}</span>
+    <span>${{ lookupResult.price | number:'1.2-2' }}</span>
+    <span [class.gain]="lookupResult.changePercent > 0" [class.loss]="lookupResult.changePercent < 0">
+      {{ lookupResult.changePercent > 0 ? '+' : '' }}{{ lookupResult.changePercent }}%
+    </span>
+  </div>
+
+  <!-- Watchlist table -->
   <p *ngIf="loading" class="status">Loading...</p>
   <p *ngIf="error" class="error">{{ error }}</p>
+
   <table *ngIf="!loading && !error">
     <thead>
       <tr><th>Ticker</th><th>Price</th><th>Change %</th></tr>
@@ -14,9 +30,13 @@
       <tr *ngFor="let stock of filtered">
         <td class="ticker">{{ stock.ticker }}</td>
         <td>{{ stock.price | number:'1.2-2' }}</td>
-        <td [class.gain]="stock.changePercent > 0" [class.loss]="stock.changePercent < 0">{{ stock.changePercent > 0 ? '+' : '' }}{{ stock.changePercent }}%</td>
+        <td [class.gain]="stock.changePercent > 0" [class.loss]="stock.changePercent < 0">
+          {{ stock.changePercent > 0 ? '+' : '' }}{{ stock.changePercent }}%
+        </td>
       </tr>
-      <tr *ngIf="filtered.length === 0"><td colspan="3" class="empty">No results.</td></tr>
+      <tr *ngIf="filtered.length === 0">
+        <td colspan="3" class="empty">No results.</td>
+      </tr>
     </tbody>
   </table>
 </div>
